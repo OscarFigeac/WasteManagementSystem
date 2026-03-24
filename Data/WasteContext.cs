@@ -9,11 +9,8 @@ namespace WasteManagementSystem.Data
             : base(options)
         {
         }
-
-        // These define your database tables
         public DbSet<HouseDetails> Houses { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<WasteLog> WasteLogs { get; set; }
     }
-}
 }
