@@ -21,7 +21,6 @@ namespace WasteManagementSystem.Models
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
         public string Password { get; set; } = string.Empty;
 
-        // Navigation Property: One House has many Items
         public virtual ICollection<Item> Items { get; set; } = new List<Item>();
     }
 }
