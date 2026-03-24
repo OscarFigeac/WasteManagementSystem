@@ -32,4 +32,10 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services); //might need to be removed later on
+}
+
 app.Run();
