@@ -1,62 +1,70 @@
 ﻿@model WasteManagementSystem.Models.Item
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add New Item";
 }
 
-<h1>Create</h1>
-
-<h4>Item</h4>
+<h1>Add New Item</h1>
 <hr />
+
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="ItemName" class="control-label"></label>
-                <input asp-for="ItemName" class="form-control" />
+                <input asp-for="ItemName" class="form-control" placeholder="e.g. Organic Milk" />
                 <span asp-validation-for="ItemName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Category" class="control-label"></label>
-                <select asp-for="Category" class="form-control"></select>
+                <select asp-for="Category" class="form-control"
+                        asp-items="Html.GetEnumSelectList<WasteManagementSystem.Models.ItemCategory>()">
+                </select>
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="PurchaseDate" class="control-label"></label>
-                <input asp-for="PurchaseDate" class="form-control" />
+                <input asp-for="PurchaseDate" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="PurchaseDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="ExpiryDate" class="control-label"></label>
-                <input asp-for="ExpiryDate" class="form-control" />
+                <input asp-for="ExpiryDate" class="form-control" type="date" value="@DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="ExpiryDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Value" class="control-label"></label>
-                <input asp-for="Value" class="form-control" />
+                <div class="input-group">
+                    <span class="input-group-text">€</span>
+                    <input asp-for="Value" class="form-control" step="0.01" />
+                </div>
                 <span asp-validation-for="Value" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="HouseDetailsId" class="control-label"></label>
-                <select asp-for="HouseDetailsId" class ="form-control" asp-items="ViewBag.HouseDetailsId"></select>
+
+            <div class="form-group mb-3">
+                <label asp-for="HouseDetailsId" class="control-label">Assign to Household</label>
+                <select asp-for="HouseDetailsId" class="form-control" asp-items="ViewBag.HouseDetailsId">
+                    <option value="">-- Select a House --</option>
+                </select>
+                <span asp-validation-for="HouseDetailsId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Create Item" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
