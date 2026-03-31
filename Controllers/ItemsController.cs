@@ -22,24 +22,38 @@ namespace WasteManagementSystem.Controllers
         }
 
         // GET: Items
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string itemCategory)
         {
-            var items = await _context.Items
-                .Include(i => i.House)
-                .ToListAsync();
+            var itemsQuery = _context.Items.Include(i => i.House).AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                itemsQuery = itemsQuery.Where(s => s.ItemName.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(itemCategory))
+            {
+                if (Enum.TryParse(itemCategory, out ItemCategory categoryEnum))
+                {
+                    itemsQuery = itemsQuery.Where(x => x.Category == categoryEnum);
+                }
+            }
+
+            var items = await itemsQuery.ToListAsync();
 
             var dtoData = items.Select(i => new ItemDTO
             {
                 Id = i.Id,
                 Name = i.ItemName,
                 Category = i.Category.ToString(),
-                FinancialValue = i.Value,
-                DaysRemaining = (i.ExpiryDate - DateTime.Now).Days > 0
-                        ? (i.ExpiryDate - DateTime.Now).Days.ToString()
-                        : "0",
+                HouseAddress = i.House?.Address ?? "No House",
+                DaysRemaining = (i.ExpiryDate - DateTime.Now).Days.ToString(),
                 ExpiryStatus = (i.ExpiryDate < DateTime.Now) ? "Expired" : "Safe",
-                HouseAddress = i.House?.Address ?? "No House Assigned"
+                WasteImpact = i.Value > 10 ? "High" : "Low"
             }).ToList();
+
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentCategory"] = itemCategory;
 
             return View(dtoData);
         }
