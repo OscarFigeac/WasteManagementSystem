@@ -89,17 +89,13 @@ namespace WasteManagementSystem.Controllers
         // GET: Items/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var item = await _context.Items.FindAsync(id);
-            if (item == null)
-            {
-                return NotFound();
-            }
+            if (item == null) return NotFound();
+
             ViewData["HouseDetailsId"] = new SelectList(_context.Houses, "Id", "Address", item.HouseDetailsId);
+
             return View(item);
         }
 
@@ -127,11 +123,7 @@ namespace WasteManagementSystem.Controllers
                     if (!ItemExists(item.Id))
                     {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    }else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
