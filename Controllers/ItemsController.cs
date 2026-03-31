@@ -77,6 +77,19 @@ namespace WasteManagementSystem.Controllers
             return View(item);
         }
 
+
+        // GET: Items/WasteHistory
+        public async Task<IActionResult> WasteHistory()
+        {
+            var history = await _context.WasteLogs
+                .Include(w => w.Item)
+                    .ThenInclude(i => i.House)
+                .OrderByDescending(w => w.DateWasted)
+                .ToListAsync();
+
+            return View(history);
+        }
+
         // GET: Items/LogWaste/5
         public async Task<IActionResult> LogWaste(int? id)
         {
