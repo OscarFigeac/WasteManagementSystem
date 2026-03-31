@@ -140,25 +140,31 @@ namespace WasteManagementSystem.Controllers
         }
 
         // GET: Items/Delete/5
+        // Fetches an item and maps the item into a dto object to be displayed on the delete confirmation page. 
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var item = await _context.Items
                 .Include(i => i.House)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
 
-            return View(item);
+            if (item == null) return NotFound();
+
+            var dto = new ItemDTO
+            {
+                Id = item.Id,
+                Name = item.ItemName,
+                Category = item.Category.ToString(),
+                HouseAddress = item.House?.Address ?? "Unassigned",
+                WasteImpact = item.Value > 10 ? "High Priority" : "Low"
+            };
+
+            return View(dto);
         }
 
         // POST: Items/Delete/5
+        // Actually deletes the record from the database. If the item is not found it returns the user to the index page.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -167,9 +173,8 @@ namespace WasteManagementSystem.Controllers
             if (item != null)
             {
                 _context.Items.Remove(item);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
