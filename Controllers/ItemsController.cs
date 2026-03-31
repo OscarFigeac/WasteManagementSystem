@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WasteManagementSystem.Data;
 using WasteManagementSystem.Models;
+using WasteManagementSystem.Models.DTOs;
+
 
 namespace WasteManagementSystem.Controllers
 {
@@ -23,7 +25,18 @@ namespace WasteManagementSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var wasteContext = _context.Items.Include(i => i.House);
-            return View(await wasteContext.ToListAsync());
+            var items = await _context.Items.ToListAsync();
+
+            var dtoData = items.Select(i => new ItemDTO
+            {
+                Name = i.ItemName,
+                Category = i.Category.ToString(),
+                FinancialValue = i.Value,
+                DaysRemaining = (i.ExpiryDate - DateTime.Now).Days.ToString(),
+                ExpiryStatus = (i.ExpiryDate < DateTime.Now) ? "Expired" : "Safe"
+            }).ToList();
+
+            return View(dtoData);
         }
 
         // GET: Items/Details/5
