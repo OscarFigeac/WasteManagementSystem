@@ -14,6 +14,7 @@
     {
         InPantry,
         Consumed,
-        Wasted
+        Wasted,
+        Inactive
     }
 }
