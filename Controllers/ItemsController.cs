@@ -24,17 +24,21 @@ namespace WasteManagementSystem.Controllers
         // GET: Items
         public async Task<IActionResult> Index()
         {
-            var items = await _context.Items.ToListAsync();
+            var items = await _context.Items
+                .Include(i => i.House)
+                .ToListAsync();
 
             var dtoData = items.Select(i => new ItemDTO
             {
-                Id = i.Id, 
+                Id = i.Id,
                 Name = i.ItemName,
                 Category = i.Category.ToString(),
                 FinancialValue = i.Value,
-                DaysRemaining = (i.ExpiryDate - DateTime.Now).Days.ToString(),
+                DaysRemaining = (i.ExpiryDate - DateTime.Now).Days > 0
+                        ? (i.ExpiryDate - DateTime.Now).Days.ToString()
+                        : "0",
                 ExpiryStatus = (i.ExpiryDate < DateTime.Now) ? "Expired" : "Safe",
-                WasteImpact = i.Value > 10 ? "High Priority" : "Low" 
+                HouseAddress = i.House?.Address ?? "No House Assigned"
             }).ToList();
 
             return View(dtoData);
@@ -67,11 +71,10 @@ namespace WasteManagementSystem.Controllers
         }
 
         // POST: Items/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // This reverse maps the content and turns it into a database item from a dto object. If fails it returns the user to the view.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ItemName,Category,PurchaseDate,ExpiryDate,Status,Value,HouseDetailsId")] Item item)
+        public async Task<IActionResult> Create([Bind("ItemName,Category,PurchaseDate,ExpiryDate,Value,HouseDetailsId")] Item item)
         {
             if (ModelState.IsValid)
             {
