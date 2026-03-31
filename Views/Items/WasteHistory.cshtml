@@ -1,0 +1,52 @@
+﻿@model IEnumerable<WasteManagementSystem.Models.WasteLog>
+
+@{
+    ViewData["Title"] = "Waste History";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Waste History & Impact</h1>
+        <a asp-action="Index" class="btn btn-outline-primary">Back to Inventory</a>
+    </div>
+    
+    <p class="text-muted">A log of all items disposed of and the reasons provided.</p>
+
+    <table class="table table-hover mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Household</th>
+                <th>Reason for Waste</th>
+                <th>Date Disposed</th>
+                <th>Financial Loss</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td><strong>@log.Item?.ItemName</strong></td>
+                    <td>@log.Item?.Category</td>
+                    <td>@log.Item?.House?.Address</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">@log.Reason</span>
+                    </td>
+                    <td>@log.DateWasted.ToShortDateString()</td>
+                    <td class="text-danger fw-bold">
+                        @log.Item?.Value.ToString("C")
+                    </td>
+                </tr>
+            }
+        </tbody>
+        @if (!Model.Any())
+        {
+            <tfoot>
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No waste logs found yet!</td>
+                </tr>
+            </tfoot>
+        }
+    </table>
+</div>
