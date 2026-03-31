@@ -77,7 +77,7 @@ namespace WasteManagementSystem.Controllers
             return View(item);
         }
 
-
+        
         // GET: Items/WasteHistory
         public async Task<IActionResult> WasteHistory()
         {
@@ -121,7 +121,8 @@ namespace WasteManagementSystem.Controllers
                 var item = await _context.Items.FindAsync(wasteLog.ItemId);
                 if (item != null)
                 {
-                    _context.Items.Remove(item);
+                    item.Status = ItemStatus.Wasted;
+                    _context.Update(item);
                 }
 
                 await _context.SaveChangesAsync();
