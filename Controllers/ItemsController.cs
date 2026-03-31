@@ -24,16 +24,17 @@ namespace WasteManagementSystem.Controllers
         // GET: Items
         public async Task<IActionResult> Index()
         {
-            var wasteContext = _context.Items.Include(i => i.House);
             var items = await _context.Items.ToListAsync();
 
             var dtoData = items.Select(i => new ItemDTO
             {
+                Id = i.Id, 
                 Name = i.ItemName,
                 Category = i.Category.ToString(),
                 FinancialValue = i.Value,
                 DaysRemaining = (i.ExpiryDate - DateTime.Now).Days.ToString(),
-                ExpiryStatus = (i.ExpiryDate < DateTime.Now) ? "Expired" : "Safe"
+                ExpiryStatus = (i.ExpiryDate < DateTime.Now) ? "Expired" : "Safe",
+                WasteImpact = i.Value > 10 ? "High Priority" : "Low" 
             }).ToList();
 
             return View(dtoData);
