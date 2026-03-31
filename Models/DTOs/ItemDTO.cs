@@ -10,6 +10,8 @@
         public string DaysRemaining { get; set; } = string.Empty;
         public decimal FinancialValue { get; set; }
 
+        public string HouseAddress { get; set; } = string.Empty;
+
         //This field is exclusively for the purpose of displaying the impact this has on the environment. Update on Controller when necessary.
         public string WasteImpact { get; set; } = string.Empty;
     }
