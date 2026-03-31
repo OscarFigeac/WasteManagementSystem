@@ -77,6 +77,47 @@ namespace WasteManagementSystem.Controllers
             return View(item);
         }
 
+        // GET: Items/LogWaste/5
+        public async Task<IActionResult> LogWaste(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var item = await _context.Items.FindAsync(id);
+            if (item == null) return NotFound();
+
+            // We pass the item name via ViewBag so the user knows what they are logging
+            ViewBag.ItemName = item.ItemName;
+
+            var wasteLog = new WasteLog
+            {
+                ItemId = item.Id,
+                DateWasted = DateTime.Now
+            };
+
+            return View(wasteLog);
+        }
+
+        // POST: Items/LogWaste/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LogWaste(WasteLog wasteLog)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.WasteLogs.Add(wasteLog);
+
+                var item = await _context.Items.FindAsync(wasteLog.ItemId);
+                if (item != null)
+                {
+                    _context.Items.Remove(item);
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(wasteLog);
+        }
+
         // GET: Items/Create
         public IActionResult Create()
         {
