@@ -1,0 +1,44 @@
+﻿@model WasteManagementSystem.Models.WasteLog
+
+@{
+    ViewData["Title"] = "Log Waste";
+}
+
+<div class="container mt-4">
+    <h2 class="text-warning">Log Item as Waste</h2>
+    <p class="lead">Reporting waste for: <strong>@ViewBag.ItemName</strong></p>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="LogWaste">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <input type="hidden" asp-for="ItemId" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="Reason" class="control-label">Why was this item wasted?</label>
+                    <select asp-for="Reason" class="form-control">
+                        <option value="">-- Select Reason --</option>
+                        <option value="Expired">Expired (Date passed)</option>
+                        <option value="Spoiled">Spoiled (Visible damage)</option>
+                        <option value="Over-purchased">Over-purchased (Too much)</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span asp-validation-for="Reason" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="DateWasted" class="control-label">Date of Disposal</label>
+                    <input asp-for="DateWasted" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="DateWasted" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-warning">Log & Remove Item</button>
+                    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
