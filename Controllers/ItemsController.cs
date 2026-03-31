@@ -85,7 +85,6 @@ namespace WasteManagementSystem.Controllers
             var item = await _context.Items.FindAsync(id);
             if (item == null) return NotFound();
 
-            // We pass the item name via ViewBag so the user knows what they are logging
             ViewBag.ItemName = item.ItemName;
 
             var wasteLog = new WasteLog
