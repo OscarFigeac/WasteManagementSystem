@@ -4,62 +4,69 @@
     ViewData["Title"] = "Add New Item";
 }
 
-<h1>Add New Item</h1>
-<hr />
-
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group mb-3">
-                <label asp-for="ItemName" class="control-label"></label>
-                <input asp-for="ItemName" class="form-control" placeholder="e.g. Organic Milk" />
-                <span asp-validation-for="ItemName" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Category" class="control-label"></label>
-                <select asp-for="Category" class="form-control"
-                        asp-items="Html.GetEnumSelectList<WasteManagementSystem.Models.ItemCategory>()">
-                </select>
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="PurchaseDate" class="control-label"></label>
-                <input asp-for="PurchaseDate" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                <span asp-validation-for="PurchaseDate" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="ExpiryDate" class="control-label"></label>
-                <input asp-for="ExpiryDate" class="form-control" type="date" value="@DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")" />
-                <span asp-validation-for="ExpiryDate" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Value" class="control-label"></label>
-                <div class="input-group">
-                    <span class="input-group-text">€</span>
-                    <input asp-for="Value" class="form-control" step="0.01" />
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                <div class="card-header bg-white border-0 pt-4 ps-4">
+                    <h2 class="fw-bold" style="color: #2c3e50;">Add <span style="color: #00a19a;">New Item</span></h2>
+                    <p class="text-muted">Enter details to add this item to your household inventory.</p>
                 </div>
-                <span asp-validation-for="Value" class="text-danger"></span>
-            </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <div class="form-group mb-3">
-                <label asp-for="HouseDetailsId" class="control-label">Assign to Household</label>
-                <select asp-for="HouseDetailsId" class="form-control" asp-items="ViewBag.HouseDetailsId">
-                    <option value="">-- Select a House --</option>
-                </select>
-                <span asp-validation-for="HouseDetailsId" class="text-danger"></span>
-            </div>
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label asp-for="ItemName" class="form-label small fw-bold text-uppercase text-muted">Item Name</label>
+                                <input asp-for="ItemName" class="form-control border-0 bg-light" placeholder="e.g. Organic Chicken Breast" style="height: 45px;" />
+                                <span asp-validation-for="ItemName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Value" class="form-label small fw-bold text-uppercase text-muted">Estimated Value (€)</label>
+                                <input asp-for="Value" class="form-control border-0 bg-light" placeholder="0.00" style="height: 45px;" />
+                                <span asp-validation-for="Value" class="text-danger"></span>
+                            </div>
+                        </div>
 
-            <div class="form-group mt-4">
-                <input type="submit" value="Create Item" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Category" class="form-label small fw-bold text-uppercase text-muted">Category</label>
+                                <select asp-for="Category" class="form-select border-0 bg-light" style="height: 45px;"
+                                        asp-items="Html.GetEnumSelectList<WasteManagementSystem.Models.ItemCategory>()"></select>
+                                <span asp-validation-for="Category" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="HouseDetailsId" class="form-label small fw-bold text-uppercase text-muted">Assign to Household</label>
+                                <select asp-for="HouseDetailsId" class="form-select border-0 bg-light" style="height: 45px;" asp-items="ViewBag.HouseDetailsId">
+                                    <option value="">-- Select Household --</option>
+                                </select>
+                                <span asp-validation-for="HouseDetailsId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="PurchaseDate" class="form-label small fw-bold text-uppercase text-muted">Purchase Date</label>
+                                <input asp-for="PurchaseDate" class="form-control border-0 bg-light" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" style="height: 45px;" />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ExpiryDate" class="form-label small fw-bold text-uppercase text-muted">Expiry Date</label>
+                                <input asp-for="ExpiryDate" class="form-control border-0 bg-light" type="date" value="@DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")" style="height: 45px;" />
+                                <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between pt-3 border-top">
+                            <a asp-action="Index" class="btn btn-link text-decoration-none text-muted">Cancel</a>
+                            <button type="submit" class="btn btn-lg px-5 fw-bold" style="background-color: #00a19a; color: white; border-radius: 8px;">
+                                Save Item
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 

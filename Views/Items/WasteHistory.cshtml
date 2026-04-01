@@ -5,48 +5,83 @@
 }
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center">
-        <h1>Waste History & Impact</h1>
-        <a asp-action="Index" class="btn btn-outline-primary">Back to Inventory</a>
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h1 class="fw-bold" style="color: #2c3e50;">Waste <span style="color: #00a19a;">History</span></h1>
+            <p class="text-muted mb-0">Tracking the environmental and financial impact of disposed items.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-dark fw-bold" style="border-radius: 8px;">
+            <i class="bi bi-arrow-left"></i> Back to Pantry
+        </a>
     </div>
-    
-    <p class="text-muted">A log of all items disposed of and the reasons provided.</p>
 
-    <table class="table table-hover mt-3">
-        <thead class="table-dark">
-            <tr>
-                <th>Item Name</th>
-                <th>Category</th>
-                <th>Household</th>
-                <th>Reason for Waste</th>
-                <th>Date Disposed</th>
-                <th>Financial Loss</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var log in Model)
-            {
-                <tr>
-                    <td><strong>@log.Item?.ItemName</strong></td>
-                    <td>@log.Item?.Category</td>
-                    <td>@log.Item?.House?.Address</td>
-                    <td>
-                        <span class="badge bg-warning text-dark">@log.Reason</span>
-                    </td>
-                    <td>@log.DateWasted.ToShortDateString()</td>
-                    <td class="text-danger fw-bold">
-                        @log.Item?.Value.ToString("C")
-                    </td>
-                </tr>
-            }
-        </tbody>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center p-3" style="border-radius: 12px; border-bottom: 4px solid #00a19a !important;">
+                <div class="text-uppercase small fw-bold text-muted">Total Items Wasted</div>
+                <div class="h2 fw-bold" style="color: #2c3e50;">@Model.Count()</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center p-3" style="border-radius: 12px; border-bottom: 4px solid #e74c3c !important;">
+                <div class="text-uppercase small fw-bold text-muted">Total Financial Loss</div>
+                <div class="h2 fw-bold text-danger">€@Model.Sum(x => x.Item?.Value ?? 0).ToString("N2")</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center p-3" style="border-radius: 12px; border-bottom: 4px solid #f1c40f !important;">
+                <div class="text-uppercase small fw-bold text-muted">Most Common Reason</div>
+                <div class="h2 fw-bold" style="color: #2c3e50;">
+                    @(Model.GroupBy(x => x.Reason).OrderByDescending(g => g.Count()).Select(g => g.Key).FirstOrDefault() ?? "N/A")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase small fw-bold text-muted">Disposed Item</th>
+                        <th class="py-3 text-uppercase small fw-bold text-muted">Household</th>
+                        <th class="py-3 text-uppercase small fw-bold text-muted">Reason</th>
+                        <th class="py-3 text-uppercase small fw-bold text-muted">Date Wasted</th>
+                        <th class="pe-4 py-3 text-end text-uppercase small fw-bold text-muted">Loss Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark">@log.Item?.ItemName</div>
+                                <div class="small text-muted">Category: @log.Item?.Category</div>
+                            </td>
+                            <td>
+                                <span class="text-muted"><i class="bi bi-house-door"></i> @log.Item?.House?.Address</span>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill bg-warning text-dark px-3">@log.Reason</span>
+                            </td>
+                            <td>
+                                <div class="small fw-bold">@log.DateWasted.ToString("dd MMM yyyy")</div>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <span class="text-danger fw-bold">-€@log.Item?.Value.ToString("N2")</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
         @if (!Model.Any())
         {
-            <tfoot>
-                <tr>
-                    <td colspan="6" class="text-center text-muted">No waste logs found yet!</td>
-                </tr>
-            </tfoot>
+            <div class="text-center py-5">
+                <i class="bi bi-check-circle text-success display-4"></i>
+                <p class="text-muted mt-2 italic">Your waste history is currently empty. Great job!</p>
+            </div>
         }
-    </table>
+    </div>
 </div>
