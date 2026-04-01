@@ -27,7 +27,8 @@ namespace WasteManagementSystem.Models
         [Display(Name = "Estimated Value (€)")]
         public decimal Value { get; set; }
 
-        public int HouseDetailsId { get; set; }
+        [Required]
+        public string HouseDetailsId { get; set; } = string.Empty;
         public virtual HouseDetails? House { get; set; }
 
         public virtual WasteLog? WasteLog { get; set; }

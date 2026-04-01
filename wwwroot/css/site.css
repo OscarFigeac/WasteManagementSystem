@@ -37,3 +37,31 @@ body {
     background-color: #f1c40f;
     color: #000;
 }
+
+.table thead th {
+    background-color: #212529;
+    color: #00a19a;
+    border-bottom: 2px solid #00a19a;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+.status-safe {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+.status-expired {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #00a19a;
+    border: none;
+}
+
+    .btn-primary:hover {
+        background-color: #00847e;
+    }

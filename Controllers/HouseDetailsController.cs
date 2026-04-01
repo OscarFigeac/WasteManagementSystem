@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WasteManagementSystem.Data;
 using WasteManagementSystem.Models;
@@ -25,70 +20,35 @@ namespace WasteManagementSystem.Controllers
             return View(await _context.Houses.ToListAsync());
         }
 
-        // GET: HouseDetails/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: HouseDetails/Details/A65F4E2
+        public async Task<IActionResult> Details(string id) // Changed to string
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var houseDetails = await _context.Houses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (houseDetails == null)
-            {
-                return NotFound();
-            }
+                .FirstOrDefaultAsync(m => m.Eircode == id); // Changed from .Id
+
+            if (houseDetails == null) return NotFound();
 
             return View(houseDetails);
         }
 
-        // GET: HouseDetails/Create
-        public IActionResult Create()
+        // GET: HouseDetails/Edit/A65F4E2
+        public async Task<IActionResult> Edit(string id) // Changed to string
         {
-            return View();
-        }
-
-        // POST: HouseDetails/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Address,Eircode,Email,Password")] HouseDetails houseDetails)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(houseDetails);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(houseDetails);
-        }
-
-        // GET: HouseDetails/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var houseDetails = await _context.Houses.FindAsync(id);
-            if (houseDetails == null)
-            {
-                return NotFound();
-            }
+            if (houseDetails == null) return NotFound();
+
             return View(houseDetails);
         }
 
-        // POST: HouseDetails/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Address,Eircode,Email,Password")] HouseDetails houseDetails)
+        public async Task<IActionResult> Edit(string id, [Bind("Address,Eircode,Password")] HouseDetails houseDetails)
         {
-            if (id != houseDetails.Id)
+            if (id != houseDetails.Eircode) // Changed from .Id
             {
                 return NotFound();
             }
@@ -102,42 +62,30 @@ namespace WasteManagementSystem.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HouseDetailsExists(houseDetails.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!HouseDetailsExists(houseDetails.Eircode)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(houseDetails);
         }
 
-        // GET: HouseDetails/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: HouseDetails/Delete/A65F4E2
+        public async Task<IActionResult> Delete(string id) // Changed to string
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var houseDetails = await _context.Houses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (houseDetails == null)
-            {
-                return NotFound();
-            }
+                .FirstOrDefaultAsync(m => m.Eircode == id);
+
+            if (houseDetails == null) return NotFound();
 
             return View(houseDetails);
         }
 
-        // POST: HouseDetails/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id) // Changed to string
         {
             var houseDetails = await _context.Houses.FindAsync(id);
             if (houseDetails != null)
@@ -149,9 +97,9 @@ namespace WasteManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool HouseDetailsExists(int id)
+        private bool HouseDetailsExists(string id) // Changed to string
         {
-            return _context.Houses.Any(e => e.Id == id);
+            return _context.Houses.Any(e => e.Eircode == id);
         }
     }
 }

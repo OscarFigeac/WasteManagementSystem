@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using WasteManagementSystem.Models.DTOs;
 
 namespace WasteManagementSystem.Controllers
 {
+    [Authorize]
     public class ItemsController : Controller
     {
         private readonly WasteContext _context;
@@ -24,19 +26,21 @@ namespace WasteManagementSystem.Controllers
         // GET: Items
         public async Task<IActionResult> Index(string searchString, string itemCategory)
         {
-            var itemsQuery = _context.Items.Include(i => i.House).AsQueryable();
+            string userEircode = User.Identity.Name;
+
+            var itemsQuery = _context.Items
+                .Include(i => i.House)
+                .Where(i => i.HouseDetailsId == userEircode && i.Status == ItemStatus.InPantry)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
             {
                 itemsQuery = itemsQuery.Where(s => s.ItemName.Contains(searchString));
             }
 
-            if (!string.IsNullOrEmpty(itemCategory))
+            if (!string.IsNullOrEmpty(itemCategory) && Enum.TryParse(itemCategory, out ItemCategory categoryEnum))
             {
-                if (Enum.TryParse(itemCategory, out ItemCategory categoryEnum))
-                {
-                    itemsQuery = itemsQuery.Where(x => x.Category == categoryEnum);
-                }
+                itemsQuery = itemsQuery.Where(x => x.Category == categoryEnum);
             }
 
             var items = await itemsQuery.ToListAsync();
@@ -81,9 +85,11 @@ namespace WasteManagementSystem.Controllers
         // GET: Items/WasteHistory
         public async Task<IActionResult> WasteHistory()
         {
+            string userEircode = User.Identity.Name;
+
             var history = await _context.WasteLogs
                 .Include(w => w.Item)
-                    .ThenInclude(i => i.House)
+                .Where(w => w.Item.HouseDetailsId == userEircode)
                 .OrderByDescending(w => w.DateWasted)
                 .ToListAsync();
 
@@ -134,7 +140,6 @@ namespace WasteManagementSystem.Controllers
         // GET: Items/Create
         public IActionResult Create()
         {
-            ViewData["HouseDetailsId"] = new SelectList(_context.Houses, "Id", "Address");
             return View();
         }
 
@@ -144,13 +149,20 @@ namespace WasteManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ItemName,Category,PurchaseDate,ExpiryDate,Value,HouseDetailsId")] Item item)
         {
+            item.HouseDetailsId = User.Identity.Name;
+
+            item.Status = ItemStatus.InPantry;
+
+            ModelState.Remove("HouseDetailsId");
+            ModelState.Remove("House");
+
             if (ModelState.IsValid)
             {
                 _context.Add(item);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["HouseDetailsId"] = new SelectList(_context.Houses, "Id", "Address", item.HouseDetailsId);
+
             return View(item);
         }
 
@@ -238,9 +250,6 @@ namespace WasteManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ItemExists(int id)
-        {
-            return _context.Items.Any(e => e.Id == id);
-        }
+        private bool ItemExists(int id) => _context.Items.Any(e => e.Id == id);
     }
 }

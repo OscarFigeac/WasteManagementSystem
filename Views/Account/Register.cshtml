@@ -1,0 +1,44 @@
+﻿@model WasteManagementSystem.Models.HouseDetails
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold" style="color: #2c3e50;">Join <span style="color: #00a19a;">MyWaste</span></h2>
+                        <p class="text-muted">Register your household to track and reduce waste.</p>
+                    </div>
+
+                    <form asp-action="Register">
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Eircode" class="small fw-bold text-muted text-uppercase"></label>
+                            <input asp-for="Eircode" class="form-control bg-light border-0" placeholder="e.g. A65F4E2" style="height: 50px;" />
+                            <span asp-validation-for="Eircode" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="small fw-bold text-muted text-uppercase"></label>
+                            <input asp-for="Address" class="form-control bg-light border-0" placeholder="Street, City, County" style="height: 50px;" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Password" class="small fw-bold text-muted text-uppercase"></label>
+                            <input asp-for="Password" type="password" class="form-control bg-light border-0" style="height: 50px;" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-lg w-100 fw-bold mb-3" style="background-color: #00a19a; color: white;">Create Account</button>
+
+                        <div class="text-center">
+                            <a asp-action="Login" class="text-decoration-none small text-muted">Already have an account? Log in here.</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

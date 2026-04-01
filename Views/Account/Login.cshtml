@@ -1,0 +1,41 @@
+﻿@model WasteManagementSystem.Models.HouseDetails
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold" style="color: #2c3e50;">Welcome <span style="color: #00a19a;">Back</span></h2>
+                        <p class="text-muted">Log in to manage your household pantry.</p>
+                    </div>
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger border-0 small">@ViewBag.Error</div>
+                    }
+
+                    <form asp-action="Login" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="small fw-bold text-muted text-uppercase">Eircode</label>
+                            <input name="eircode" class="form-control bg-light border-0" placeholder="e.g. A65F4E2" style="height: 50px;" required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="small fw-bold text-muted text-uppercase">Password</label>
+                            <input name="password" type="password" class="form-control bg-light border-0" style="height: 50px;" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-lg w-100 fw-bold mb-3" style="background-color: #00a19a; color: white;">Log In</button>
+
+                        <div class="text-center">
+                            <a asp-action="Register" class="text-decoration-none small text-muted">Don't have an account? Register here.</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
