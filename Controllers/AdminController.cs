@@ -36,5 +36,17 @@ namespace WasteManagementSystem.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> PromoteUser(string id)
+        {
+            var house = await _context.Houses.FindAsync(id);
+            if (house != null)
+            {
+                house.Role = "Admin";
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
