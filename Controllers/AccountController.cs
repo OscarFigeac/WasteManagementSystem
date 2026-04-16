@@ -38,6 +38,8 @@ namespace WasteManagementSystem.Controllers
                     return View(model);
                 }
 
+                model.Role = "User";
+
                 model.Password = _passwordHasher.HashPassword(model, model.Password);
 
                 _context.Add(model);
