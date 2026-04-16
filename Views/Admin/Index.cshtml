@@ -1,0 +1,43 @@
+﻿@model IEnumerable<WasteManagementSystem.Models.HouseDetails>
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <h2>Admin Dashboard - Household Overview</h2>
+    <hr />
+
+    <table class="table table-hover mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Eircode</th>
+                <th>Address</th>
+                <th>Role</th>
+                <th>Total Items</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var house in Model)
+            {
+                <tr>
+                    <td>@house.Eircode</td>
+                    <td>@house.Address</td>
+                    <td>
+                        <span class="badge @(house.Role == "Admin" ? "bg-danger" : "bg-primary")">
+                            @house.Role
+                        </span>
+                    </td>
+                    <td>@(house.Items?.Count ?? 0)</td>
+                    <td>
+                        <form asp-action="DeleteUser" asp-route-id="@house.Eircode" method="post"
+                              onsubmit="return confirm('Are you sure you want to delete this household?');">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
