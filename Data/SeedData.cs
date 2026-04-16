@@ -20,7 +20,7 @@ namespace WasteManagementSystem.Data
                 var testHouse = new HouseDetails
                 {
                     Address = "123 Green Lane, Drogheda",
-                    Eircode = "A65F4E2", 
+                    Eircode = "A65F4E2",
                     Password = "" //temporary
                 };
 
@@ -29,7 +29,22 @@ namespace WasteManagementSystem.Data
                 context.Houses.Add(testHouse);
                 context.SaveChanges();
 
-                context.Items.AddRange(
+                if (!context.Houses.Any(h => h.Role == "Admin"))
+                {
+                    var adminHouse = new HouseDetails
+                    {
+                        Eircode = "D02X285", // Use a real or test Eircode
+                        Address = "System Administrator Office",
+                        Role = "Admin"
+                    };
+
+                    // password: Admin123!
+                    adminHouse.Password = hasher.HashPassword(adminHouse, "Admin123!");
+
+                    context.Houses.Add(adminHouse);
+                    context.SaveChanges();
+
+                    context.Items.AddRange(
                     new Item
                     {
                         ItemName = "Milk",
@@ -37,7 +52,7 @@ namespace WasteManagementSystem.Data
                         PurchaseDate = DateTime.Now.AddDays(-2),
                         ExpiryDate = DateTime.Now.AddDays(3),
                         Value = 1.50m,
-                        HouseDetailsId = testHouse.Eircode 
+                        HouseDetailsId = testHouse.Eircode
                     },
                     new Item
                     {
@@ -46,10 +61,11 @@ namespace WasteManagementSystem.Data
                         PurchaseDate = DateTime.Now.AddDays(-1),
                         ExpiryDate = DateTime.Now.AddDays(-1),
                         Value = 2.00m,
-                        HouseDetailsId = testHouse.Eircode 
+                        HouseDetailsId = testHouse.Eircode
                     }
                 );
-                context.SaveChanges();
+                    context.SaveChanges();
+                }
             }
         }
     }
