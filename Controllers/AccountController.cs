@@ -65,7 +65,8 @@ namespace WasteManagementSystem.Controllers
                 {
                     var claims = new List<Claim> {
                         new Claim(ClaimTypes.Name, house.Eircode),
-                        new Claim("Address", house.Address)
+                        new Claim("Address", house.Address),
+                        new Claim(ClaimTypes.Role, house.Role ?? "User")
                     };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -73,6 +74,11 @@ namespace WasteManagementSystem.Controllers
                     await HttpContext.SignInAsync(
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity));
+
+                    if (house.Role == "Admin")
+                    {
+                        return RedirectToAction("Index", "Admin");
+                    }
 
                     return RedirectToAction("Index", "Items");
                 }
