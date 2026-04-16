@@ -20,5 +20,8 @@ namespace WasteManagementSystem.Models
         public string Address { get; set; } = string.Empty;
 
         public virtual ICollection<Item> Items { get; set; } = new List<Item>();
+
+        //for admin purposes, to differentiate between users and admin accounts
+        public string Role { get; set; } = "User";
     }
 }
