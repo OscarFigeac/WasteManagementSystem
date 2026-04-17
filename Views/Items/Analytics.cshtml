@@ -1,0 +1,96 @@
+﻿@model IEnumerable<WasteManagementSystem.Models.WasteLog>
+
+@{
+    ViewData["Title"] = "Waste Analytics";
+
+    var categoryList = ViewBag.CategoryData as IEnumerable<dynamic>;
+    var labels = new List<string>();
+    var counts = new List<int>();
+
+    if (categoryList != null)
+    {
+        foreach (var item in categoryList)
+        {
+            labels.Add(item.Category.ToString());
+            counts.Add((int)item.Count);
+        }
+    }
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2><i class="bi bi-graph-up-arrow"></i> Waste Analytics</h2>
+        <a asp-action="WasteHistory" class="btn btn-outline-secondary btn-sm">View Full History</a>
+    </div>
+    <hr />
+
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm bg-dark text-white">
+                <div class="card-body text-center">
+                    <h6 class="text-uppercase small fw-bold" style="color: #00a19a;">Total Items Wasted</h6>
+                    <h2 class="display-4 fw-bold">@ViewBag.TotalItemsWasted</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm bg-danger text-white">
+                <div class="card-body text-center">
+                    <h6 class="text-uppercase small fw-bold">Estimated Financial Loss</h6>
+                    <h2 class="display-4 fw-bold">€@ViewBag.TotalFinancialLoss.ToString("F2")</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card border-0 shadow-sm p-4">
+                <h5 class="fw-bold mb-4">Waste Distribution by Category</h5>
+                <div style="height: 400px; position: relative;">
+                    <canvas id="wasteChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('wasteChart');
+
+        if (@counts.Count > 0) {
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: @Html.Raw(Json.Serialize(labels)),
+                    datasets: [{
+                        data: @Html.Raw(Json.Serialize(counts)),
+                        backgroundColor: [
+                            '#00a19a', '#ff6384', '#36a2eb',
+                            '#ffce56', '#9966ff', '#4bc0c0'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 20 } }
+                    }
+                }
+            });
+            //if no items have been logged, return a message instead of the chart
+        } else {
+            ctx.parentNode.innerHTML = `
+                <div class="text-center mt-5 py-5">
+                    <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3">No waste logs found. Your pantry is looking efficient!</p>
+                </div>`;
+        }
+    </script>
+}
