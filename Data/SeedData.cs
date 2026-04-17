@@ -33,7 +33,7 @@ namespace WasteManagementSystem.Data
                 {
                     var adminHouse = new HouseDetails
                     {
-                        Eircode = "D02X285", // Use a real or test Eircode
+                        Eircode = "D02X285",
                         Address = "System Administrator Office",
                         Role = "Admin"
                     };
