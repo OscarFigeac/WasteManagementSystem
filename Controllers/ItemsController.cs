@@ -250,6 +250,31 @@ namespace WasteManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize]
+        public async Task<IActionResult> Analytics()
+        {
+            var eircode = User.Identity.Name;
+
+            var logs = await _context.WasteLogs
+                .Include(l => l.Item)
+                .Where(l => l.Item.HouseDetailsId == eircode)
+                .ToListAsync();
+
+            var categoryData = logs.GroupBy(l => l.Item.Category)
+                .Select(g => new {
+                    Category = g.Key.ToString(),
+                    Count = g.Count(),
+                    TotalValue = g.Sum(x => x.Item.Value) //financial impact
+                }).ToList();
+
+            ViewBag.CategoryData = categoryData;
+
+            ViewBag.TotalItemsWasted = logs.Count;
+            ViewBag.TotalFinancialLoss = logs.Sum(l => l.Item.Value);
+
+            return View(logs);
+        }
+
         private bool ItemExists(int id) => _context.Items.Any(e => e.Id == id);
     }
 }
