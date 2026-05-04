@@ -1,5 +1,17 @@
 ﻿@model WasteManagementSystem.Models.HouseDetails
 
+<style>
+    .bg-light-input {
+        background-color: #f8f9fa !important;
+    }
+
+    .input-group-text {
+        cursor: pointer;
+        background-color: #f8f9fa;
+        border: none;
+    }
+</style>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -15,19 +27,24 @@
 
                         <div class="mb-3">
                             <label asp-for="Eircode" class="small fw-bold text-muted text-uppercase"></label>
-                            <input asp-for="Eircode" class="form-control bg-light border-0" placeholder="e.g. A65F4E2" style="height: 50px;" />
+                            <input asp-for="Eircode" class="form-control bg-light-input border-0" placeholder="e.g. A65F4E2" style="height: 50px;" />
                             <span asp-validation-for="Eircode" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Address" class="small fw-bold text-muted text-uppercase"></label>
-                            <input asp-for="Address" class="form-control bg-light border-0" placeholder="Street, City, County" style="height: 50px;" />
+                            <input asp-for="Address" class="form-control bg-light-input border-0" placeholder="Street, City, County" style="height: 50px;" />
                             <span asp-validation-for="Address" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
                             <label asp-for="Password" class="small fw-bold text-muted text-uppercase"></label>
-                            <input asp-for="Password" type="password" class="form-control bg-light border-0" style="height: 50px;" />
+                            <div class="input-group">
+                                <input id="regPassword" asp-for="Password" type="password" class="form-control bg-light-input border-0" style="height: 50px;" />
+                                <span class="input-group-text border-0 bg-light-input" onclick="togglePassword('regPassword', this)">
+                                    <i class="small fw-bold">SHOW</i>
+                                </span>
+                            </div>
                             <span asp-validation-for="Password" class="text-danger small"></span>
                         </div>
 
@@ -42,3 +59,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword(fieldId, btn) {
+        const input = document.getElementById(fieldId);
+        if (input.type === "password") {
+            input.type = "text";
+            btn.innerText = "HIDE";
+        } else {
+            input.type = "password";
+            btn.innerText = "SHOW";
+        }
+    }
+</script>

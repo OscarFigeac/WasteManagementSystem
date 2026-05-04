@@ -1,5 +1,17 @@
 ﻿@model WasteManagementSystem.Models.HouseDetails
 
+<style>
+    .input-group-text {
+        cursor: pointer;
+        background-color: #f8f9fa;
+        border: none;
+    }
+
+    .bg-light-input {
+        background-color: #f8f9fa !important;
+    }
+</style>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-5">
@@ -20,12 +32,17 @@
 
                         <div class="mb-3">
                             <label class="small fw-bold text-muted text-uppercase">Eircode</label>
-                            <input name="eircode" class="form-control bg-light border-0" placeholder="e.g. A65F4E2" style="height: 50px;" required />
+                            <input name="eircode" class="form-control bg-light-input border-0" placeholder="e.g. A65F4E2" style="height: 50px;" required />
                         </div>
 
                         <div class="mb-4">
                             <label class="small fw-bold text-muted text-uppercase">Password</label>
-                            <input name="password" type="password" class="form-control bg-light border-0" style="height: 50px;" required />
+                            <div class="input-group">
+                                <input id="loginPassword" name="password" type="password" class="form-control bg-light-input border-0" style="height: 50px;" required />
+                                <span class="input-group-text border-0 bg-light-input" onclick="togglePassword('loginPassword', this)">
+                                    <i class="small fw-bold">SHOW</i>
+                                </span>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-lg w-100 fw-bold mb-3" style="background-color: #00a19a; color: white;">Log In</button>
@@ -39,3 +56,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword(fieldId, btn) {
+        const input = document.getElementById(fieldId);
+        if (input.type === "password") {
+            input.type = "text";
+            btn.innerText = "HIDE";
+        } else {
+            input.type = "password";
+            btn.innerText = "SHOW";
+        }
+    }
+</script>
