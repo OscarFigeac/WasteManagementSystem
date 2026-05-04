@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Developer Dashboard";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 p-3 mb-4">
+                <h5 class="fw-bold"><i class="bi bi-cpu"></i> System Stats</h5>
+                <hr />
+                <div id="stats-loader" class="text-center py-3">
+                    <div class="spinner-border text-info" role="status"></div>
+                </div>
+                <div id="stats-content" class="d-none">
+                    <p>Total Households: <span id="stat-households" class="fw-bold"></span></p>
+                    <p>Total Items: <span id="stat-items" class="fw-bold"></span></p>
+                    <p>Waste Events: <span id="stat-waste" class="fw-bold"></span></p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 p-3">
+                <h5 class="fw-bold"><i class="bi bi-code-slash"></i> API Endpoint</h5>
+                <code class="small bg-light p-2 d-block">/api/wastestats/map-data</code>
+                <a href="/api/wastestats/map-data" target="_blank" class="btn btn-sm btn-outline-dark mt-3">View Raw JSON</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card shadow-sm border-0 p-3">
+                <h5 class="fw-bold mb-3">Live Waste Distribution Map</h5>
+                <div id="map" style="height: 600px; border-radius: 10px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var map = L.map('map').setView([53.3498, -6.2603], 7);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            fetch('/api/wastestats/map-data')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(area => {
+                        L.circle([area.coords.lat, area.coords.lng], {
+                            color: '#00a19a',
+                            fillColor: '#00a19a',
+                            fillOpacity: 0.5,
+                            radius: area.count * 2000 
+                        }).addTo(map)
+                        .bindPopup(`<b>Area: ${area.area}</b><br>Active Households: ${area.count}`);
+                    });
+                });
+
+            fetch('/api/wastestats/summary')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('stat-households').innerText = data.totalHouseholds;
+                    document.getElementById('stat-items').innerText = data.totalItemsInSystem;
+                    document.getElementById('stat-waste').innerText = data.totalWasteEvents;
+                    document.getElementById('stats-loader').classList.add('d-none');
+                    document.getElementById('stats-content').classList.remove('d-none');
+                });
+        });
+    </script>
+}
