@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Stripe.Checkout;
 using System.Security.Claims;
 using WasteManagementSystem.Data;
 using WasteManagementSystem.Models;
@@ -87,6 +89,64 @@ namespace WasteManagementSystem.Controllers
             }
 
             ViewBag.Error = "Invalid Eircode or Password";
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ProcessPayment()
+        {
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>
+        {
+            new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    UnitAmount = 499, //€4.99 
+                    Currency = "eur",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = "MyWaste Premium Membership",
+                    },
+                },
+                Quantity = 1,
+            },
+        },
+                Mode = "payment",
+                SuccessUrl = "https://localhost:7112/Account/PaymentSuccess",
+                CancelUrl = "https://localhost:7112/Account/Upgrade",
+            };
+
+            var service = new SessionService();
+            Session session = await service.CreateAsync(options);
+
+            return Redirect(session.Url);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> PaymentSuccess()
+        {
+            var eircode = User.Identity.Name;
+
+            var house = await _context.Houses.FindAsync(eircode);
+
+            if (house != null)
+            {
+                house.IsPremium = true;
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Thank you! Your account has been upgraded to Premium.";
+            }
+
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult Upgrade()
+        {
             return View();
         }
 

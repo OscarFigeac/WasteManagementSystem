@@ -254,6 +254,13 @@ namespace WasteManagementSystem.Controllers
         public async Task<IActionResult> Analytics()
         {
             var eircode = User.Identity.Name;
+            var house = await _context.Houses.FindAsync(eircode);
+
+            //feature for premium users
+            if (house == null || !house.IsPremium)
+            {
+                return RedirectToAction("Upgrade", "Account");
+            }
 
             var logs = await _context.WasteLogs
                 .Include(l => l.Item)
