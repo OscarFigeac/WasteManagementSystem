@@ -1,0 +1,60 @@
+﻿@model WasteManagementSystem.Models.DTOs.AccountDashboardViewModel
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h1 class="fw-bold"><i class="bi bi-speedometer2"></i> User Dashboard</h1>
+            <p class="text-muted">Manage your household waste and account settings.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 mb-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-4"><i class="bi bi-house-door-fill text-primary"></i> Household Profile</h5>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Eircode:</div>
+                        <div class="col-sm-8 fw-bold">@Model.Eircode</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Address:</div>
+                        <div class="col-sm-8 fw-bold">@Model.Address</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Status:</div>
+                        <div class="col-sm-8">
+                            @if (Model.IsPremium)
+                            {
+                                <span class="badge bg-success"><i class="bi bi-star-fill"></i> PREMIUM MEMBER</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">BASIC PLAN</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 mb-4 h-100">
+                <div class="card-body p-4 d-flex flex-column">
+                    <h5 class="card-title fw-bold mb-4"><i class="bi bi-gear-fill text-dark"></i> Quick Actions</h5>
+
+                    @if (!Model.IsPremium && !User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Upgrade" class="btn btn-lg w-100 mb-3" style="background-color: #00a19a; color: white;">
+                            Upgrade to Premium
+                        </a>
+                    }
+
+                    <a asp-action="ChangePassword" class="btn btn-outline-dark w-100">
+                        <i class="bi bi-key"></i> Change Password
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
