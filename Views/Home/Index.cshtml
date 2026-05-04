@@ -1,8 +1,98 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<style>
+    :root {
+        --mywaste-bg: #1a1a1a;
+        --mywaste-card: #242424;
+        --mywaste-teal: #00bfa5;
+        --mywaste-text: #ffffff;
+    }
+
+    body {
+        background-color: var(--mywaste-bg);
+        color: var(--mywaste-text);
+    }
+
+    .hero-section {
+        padding: 80px 0;
+        text-align: center;
+        background: linear-gradient(180deg, #111 0%, var(--mywaste-bg) 100%);
+    }
+
+    .teal-accent {
+        color: var(--mywaste-teal);
+    }
+
+    .btn-mywaste {
+        background-color: var(--mywaste-teal);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+
+    .stat-card {
+        background-color: var(--mywaste-card);
+        border: 1px solid #333;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    #map {
+        height: 500px;
+        width: 100%;
+        border-radius: 15px;
+        border: 2px solid #333;
+        margin-top: 20px;
+    }
+</style>
+
+<section class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Welcome <span class="teal-accent">Home</span></h1>
+        <p class="lead opacity-75">Smarter waste management for a cleaner household pantry.</p>
+        <div class="mt-4">
+            <a asp-controller="Account" asp-action="Register" class="btn btn-mywaste me-3">Get Started</a>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light px-4">Log In</a>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5">
+    <div class="row g-4">
+        <div class="col-md-4"><div class="stat-card"><h3 class="teal-accent h1 fw-bold" id="total-houses">--</h3><p class="text-muted text-uppercase small">Households</p></div></div>
+        <div class="col-md-4"><div class="stat-card"><h3 class="teal-accent h1 fw-bold" id="total-items">--</h3><p class="text-muted text-uppercase small">Items Tracked</p></div></div>
+        <div class="col-md-4"><div class="stat-card"><h3 class="teal-accent h1 fw-bold" id="total-waste">--</h3><p class="text-muted text-uppercase small">Waste Logs</p></div></div>
+    </div>
+</section>
+
+<section class="container mb-5">
+    <h2 class="fw-bold mb-4">Community <span class="teal-accent">Impact</span></h2>
+    <div id="map"></div>
+</section>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        fetch('/api/wastestats/summary').then(r => r.json()).then(d => {
+            document.getElementById('total-houses').innerText = d.totalHouseholds;
+            document.getElementById('total-items').innerText = d.totalItemsInSystem;
+            document.getElementById('total-waste').innerText = d.totalWasteEvents;
+        });
+
+        var map = L.map('map').setView([53.7, -6.6], 9);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        fetch('/api/wastestats/map-data').then(r => r.json()).then(data => {
+            data.forEach(item => {
+                L.circleMarker([item.coords.lat, item.coords.lng], { radius: item.count * 2, color: '#00bfa5' })
+                 .addTo(map).bindPopup(`<b>${item.area}</b>: ${item.count} households`);
+            });
+        });
+    </script>
+}
