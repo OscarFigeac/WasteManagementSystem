@@ -23,5 +23,9 @@ namespace WasteManagementSystem.Models
 
         //for admin purposes, to differentiate between users and admin accounts
         public string Role { get; set; } = "User";
+
+        //false for base accounts, true for premium.
+        [Display(Name = "Account Type")]
+        public bool IsPremium { get; set; } = false;
     }
 }
