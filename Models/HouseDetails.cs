@@ -7,7 +7,7 @@ namespace WasteManagementSystem.Models
 
         [Key]
         [Required]
-        [RegularExpression(@"^[A-Z][0-9][0-9W] [A-Z0-9]{4}$", ErrorMessage = "Invalid Eircode format (e.g. D00 D0D0)")] //Following the eircode syntax before inserting into the database
+        [RegularExpression(@"^[A-Z][0-9][0-9W] ?[A-Z0-9]{4}$", ErrorMessage = "Invalid Eircode format.")] //Following the eircode syntax before inserting into the database
         public string Eircode { get; set; } = string.Empty;
 
         [Required]
