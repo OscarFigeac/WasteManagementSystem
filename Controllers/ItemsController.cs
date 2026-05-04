@@ -282,6 +282,12 @@ namespace WasteManagementSystem.Controllers
             return View(logs);
         }
 
+        [Authorize(Roles = "Admin")]
+        public IActionResult DevDashboard()
+        {
+            return View();
+        }
+
         private bool ItemExists(int id) => _context.Items.Any(e => e.Id == id);
     }
 }
