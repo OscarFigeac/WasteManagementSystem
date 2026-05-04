@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WasteManagementSystem.Data;
 
@@ -10,9 +11,11 @@ using WasteManagementSystem.Data;
 namespace WasteManagementSystem.Migrations
 {
     [DbContext(typeof(WasteContext))]
-    partial class WasteContextModelSnapshot : ModelSnapshot
+    [Migration("20260417221912_AddPremiumStatus")]
+    partial class AddPremiumStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.6");
