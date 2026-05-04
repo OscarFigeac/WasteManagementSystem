@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WasteManagementSystem.Services;
 using WasteManagementSystem.Data;
 
 namespace WasteManagementSystem.Controllers
@@ -52,6 +53,31 @@ namespace WasteManagementSystem.Controllers
                 ItemCount = house.Items?.Count ?? 0,
                 Items = house.Items?.Select(i => new { i.ItemName, i.Value })
             });
+        }
+
+
+        [HttpGet("map-data")]
+        public async Task<IActionResult> GetMapData()
+        {
+            var dbData = await _context.Houses
+                .Select(h => new { Prefix = h.Eircode.Substring(0, 3) })
+                .GroupBy(x => x.Prefix)
+                .Select(g => new { Area = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var result = dbData
+                .Where(d => MapLocationServices.AreaCoordinates.ContainsKey(d.Area)) // filter to only include areas we have coordinates for
+                .Select(d => new {
+                    d.Area,
+                    d.Count,
+                    Coords = new
+                    {
+                        Lat = MapLocationServices.AreaCoordinates[d.Area].Lat,
+                        Lng = MapLocationServices.AreaCoordinates[d.Area].Lng
+                    }
+                });
+
+            return Ok(result);
         }
 
     }
