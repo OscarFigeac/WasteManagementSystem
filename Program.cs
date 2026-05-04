@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WasteManagementSystem.Data;
 using WasteManagementSystem.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,5 +55,7 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred seeding the DB.");
     }
 }
+
+StripeConfiguration.ApiKey = "sk_test_51TNL8dGnoXtKQ2PxB5RqdbfD7VTu7rMbwCw86U4Ii0UGZ2bdpIwmlBKRF4X122fnsLp7R16w320hBWbgSjkadNN800qflddwWm";
 
 app.Run();
