@@ -34,6 +34,8 @@ namespace WasteManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
+                model.Eircode = model.Eircode.Replace(" ", "").ToUpper();
+
                 if (await _context.Houses.AnyAsync(h => h.Eircode == model.Eircode))
                 {
                     ModelState.AddModelError("Eircode", "This household is already registered.");
@@ -59,7 +61,8 @@ namespace WasteManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string eircode, string password)
         {
-            var house = await _context.Houses.FirstOrDefaultAsync(h => h.Eircode == eircode);
+            var normalizedEircode = eircode.Replace(" ", "").ToUpper();
+            var house = await _context.Houses.FirstOrDefaultAsync(h => h.Eircode == normalizedEircode);
 
             if (house != null)
             {
