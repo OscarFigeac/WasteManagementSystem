@@ -257,7 +257,7 @@ namespace WasteManagementSystem.Controllers
             var house = await _context.Houses.FindAsync(eircode);
 
             //feature for premium users
-            if (house == null || !house.IsPremium)
+            if (house == null || (!house.IsPremium && !User.IsInRole("Admin")))
             {
                 return RedirectToAction("Upgrade", "Account");
             }

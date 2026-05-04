@@ -148,6 +148,61 @@ namespace WasteManagementSystem.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> Dashboard()
+        {
+            var eircode = User.Identity.Name;
+            var house = await _context.Houses.FindAsync(eircode);
+
+            if (house == null) return NotFound();
+
+            var model = new AccountDashboardViewModel
+            {
+                Eircode = house.Eircode,
+                Address = house.Address,
+                IsPremium = house.IsPremium,
+                Role = house.Role
+            };
+
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult ChangePassword() => View();
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword, string confirmPassword)
+        {
+            if (newPassword != confirmPassword)
+            {
+                ModelState.AddModelError("", "The new password and confirmation password do not match.");
+                return View();
+            }
+
+            var eircode = User.Identity.Name;
+            var house = await _context.Houses.FindAsync(eircode);
+
+            var result = _passwordHasher.VerifyHashedPassword(house, house.Password, oldPassword);
+
+            if (result == PasswordVerificationResult.Success)
+            {
+                house.Password = _passwordHasher.HashPassword(house, newPassword);
+                _context.Update(house);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Password changed successfully!";
+                return RedirectToAction("Dashboard");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Incorrect current password.");
+                return View();
+            }
+        }
+
+        [Authorize]
         public IActionResult Upgrade()
         {
             return View();
